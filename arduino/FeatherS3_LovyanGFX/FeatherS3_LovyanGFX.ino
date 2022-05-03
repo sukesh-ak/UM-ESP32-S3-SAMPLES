@@ -1,44 +1,43 @@
 
-/* 
+/*
  *  Unexpected Maker FeatherS3 + Adafruit FeatherWing TFT 2.4"
- *  
-*/
+ *
+ */
 #define LGFX_USE_V1
 
 #include <LovyanGFX.hpp>
 #include "displayconfig.h"
 #include <vector>
 
-
-/* 
- * CS PINS 
+/*
+ * CS PINS
  * TFT = 1
  * SD = 33
  * RT = 38
  */
-
 
 #define LINE_COUNT 6
 
 // create an instance of the class that you prepared.
 static LGFX lcd;
 static std::vector<int> points[LINE_COUNT];
-static int colors[] = { TFT_RED, TFT_GREEN, TFT_BLUE, TFT_CYAN, TFT_MAGENTA, TFT_YELLOW };
+static int colors[] = {TFT_RED, TFT_GREEN, TFT_BLUE, TFT_CYAN, TFT_MAGENTA, TFT_YELLOW};
 static int xoffset, yoffset, point_count;
 
 int getBaseColor(int x, int y)
 {
-  return ((x^y)&3 || ((x-xoffset)&31 && y&31) ? TFT_BLACK : ((!y || x == xoffset) ? TFT_WHITE : TFT_DARKGREEN));
+  return ((x ^ y) & 3 || ((x - xoffset) & 31 && y & 31) ? TFT_BLACK : ((!y || x == xoffset) ? TFT_WHITE : TFT_DARKGREEN));
 }
 
 void setup(void)
 {
   lcd.init();
 
-  if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 1);
+  if (lcd.width() < lcd.height())
+    lcd.setRotation(lcd.getRotation() ^ 3);
 
   yoffset = lcd.height() >> 1;
-  xoffset = lcd.width()  >> 1;
+  xoffset = lcd.width() >> 1;
   point_count = lcd.width() + 1;
 
   for (int i = 0; i < LINE_COUNT; i++)
@@ -67,7 +66,7 @@ void loop(void)
   if (prev_sec != sec)
   {
     prev_sec = sec;
-    lcd.setCursor(0,0);
+    lcd.setCursor(0, 0);
     lcd.printf("fps:%03d", fps);
     fps = 0;
   }
@@ -75,17 +74,17 @@ void loop(void)
   static int count;
   for (int i = 0; i < LINE_COUNT; i++)
   {
-    points[i][count % point_count] = (sinf((float)count / (10 + 30 * i))+sinf((float)count / (13 + 37 * i))) * (lcd.height() >> 2);
+    points[i][count % point_count] = (sinf((float)count / (10 + 30 * i)) + sinf((float)count / (13 + 37 * i))) * (lcd.height() >> 2);
   }
 
   ++count;
 
   lcd.startWrite();
   int index1 = count % point_count;
-  for (int x = 0; x < point_count-1; x++)
+  for (int x = 0; x < point_count - 1; x++)
   {
     int index0 = index1;
-    index1 = (index0 +1) % point_count;
+    index1 = (index0 + 1) % point_count;
     for (int i = 0; i < LINE_COUNT; i++)
     {
       int y = points[i][index0];
@@ -101,6 +100,6 @@ void loop(void)
       lcd.writePixel(x, y + yoffset, colors[i]);
     }
   }
-    
+
   lcd.endWrite();
 }
