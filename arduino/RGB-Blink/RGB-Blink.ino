@@ -5,10 +5,11 @@
  * 
  ********************************************/
 #include <FastLED.h>
+#include <WiFi.h>
 
-#define TINY_S3
+//#define TINY_S3
 //#define FEATHER_S3
-//#define PRO_S3
+#define PRO_S3
 
 #ifdef TINY_S3
   #define DATA_PIN 18
@@ -22,7 +23,7 @@
 
 #ifdef PRO_S3
   #define DATA_PIN 18
-  //#define POWER_PIN 17
+  #define POWER_PIN 17
 #endif
 
 
@@ -34,28 +35,48 @@ CRGB leds[NUM_LEDS];
 
 #define BRIGHTNESS 100
 
+const char* ssid     = "un";
+const char* password = "pw";
+
 void setup() { 
+
+  Serial.begin (115200);
+  Serial.println ();
 
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
 
-#ifdef TINY_S3
-  // Enable LED
+#if defined(TINY_S3) || defined(PRO_S3)
+  // Enable RGB LED
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
 #endif
 
   FastLED.setBrightness(BRIGHTNESS);
+
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
   
 }
 
 void loop() { 
   // Turn the LED on, then pause
-  leds[0] = CRGB::Red;
+  if (WiFi.status() != WL_CONNECTED)
+    leds[0] = CRGB::Red;
+  else
+    leds[0] = CRGB::Green;
+
+  
   FastLED.show();
   delay(500);
+
+  Serial.println("TURN OFF");
 
   // Now turn the LED off, then pause
   leds[0] = CRGB::Black;
   FastLED.show();
   delay(500);
+
+  Serial.println("TURN ON");  
 }
