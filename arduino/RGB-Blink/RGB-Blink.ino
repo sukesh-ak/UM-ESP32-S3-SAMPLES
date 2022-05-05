@@ -5,7 +5,6 @@
  * 
  ********************************************/
 #include <FastLED.h>
-#include <WiFi.h>
 
 //#define TINY_S3
 //#define FEATHER_S3
@@ -26,7 +25,6 @@
   #define POWER_PIN 17
 #endif
 
-
 // How many leds in your strip?
 #define NUM_LEDS 1
 
@@ -34,9 +32,6 @@
 CRGB leds[NUM_LEDS];
 
 #define BRIGHTNESS 100
-
-const char* ssid     = "un";
-const char* password = "pw";
 
 void setup() { 
 
@@ -52,21 +47,12 @@ void setup() {
 #endif
 
   FastLED.setBrightness(BRIGHTNESS);
-
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
-  
+ 
 }
 
 void loop() { 
   // Turn the LED on, then pause
-  if (WiFi.status() != WL_CONNECTED)
-    leds[0] = CRGB::Red;
-  else
-    leds[0] = CRGB::Green;
-
+  leds[0] = CRGB::Green;
   
   FastLED.show();
   delay(500);

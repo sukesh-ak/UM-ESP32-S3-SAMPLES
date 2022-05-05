@@ -20,12 +20,12 @@
 
 #ifdef FEATHER_S3
   #define DATA_PIN 40
-  //#define POWER_PIN 17
+  #define POWER_PIN 17
 #endif
 
 #ifdef PRO_S3
   #define DATA_PIN 18
-  //#define POWER_PIN 17
+  #define POWER_PIN 17
 #endif
 
 
@@ -47,20 +47,18 @@ void setup() {
 
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
 
-#ifdef TINY_S3
-  // Enable LED
+#if defined(TINY_S3) || defined(PRO_S3)
+  // Enable RGB LED
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
 #endif
 
   FastLED.setBrightness(BRIGHTNESS);
 
-
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-  
 }
 
 void loop() { 
